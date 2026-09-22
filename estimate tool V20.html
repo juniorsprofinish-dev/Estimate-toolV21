@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Junior's Pro Finish, LLC - Master Estimator</title>
+  <style>
+    :root {
+      --primary-bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --border-color: #dee2e6;
+      --text-main: #212529;
+      --text-muted: #6c757d;
+      --accent-color: #f97316;
+      --green-board-color: #10b981;
+      --paint-color: #3b82f6;
+      --footer-bg: #1e293b;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--primary-bg);
+      color: var(--text-main);
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1050px;
+      margin: 0 auto;
+      padding-bottom: 140px;
+    }
+
+    .header-content { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
+    #company-logo { max-height: 70px; max-width: 200px; object-fit: contain; display: none; }
+    
+    h1 { margin: 0; font-size: 24px; color: #333; }
+    .subtitle { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-top: 4px; }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .card-title { font-size: 16px; font-weight: 600; margin-top: 0; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+
+    .grid { display: grid; gap: 15px; }
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-4 { grid-template-columns: repeat(4, 1fr); }
+    .grid-5 { grid-template-columns: repeat(5, 1fr); }
+    .grid-6 { grid-template-columns: repeat(6, 1fr); }
+
+    .input-group { display: flex; flex-direction: column; }
+    .input-group label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; font-weight: 600; }
+    
+    input[type="text"], input[type="number"], input[type="date"], select, textarea {
+      padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 14px; width: 100%; box-sizing: border-box; font-family: inherit;
+    }
+    input[type="file"] { padding: 5px; font-size: 12px; }
+    textarea { resize: vertical; min-height: 80px; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent-color); }
+    .full-width { grid-column: 1 / -1; }
+
+    .highlight-value { font-size: 16px; font-weight: bold; color: var(--accent-color); border-left: 3px solid var(--accent-color); padding-left: 8px; margin-top: 5px; }
+    .green-highlight { color: var(--green-board-color) !important; border-left-color: var(--green-board-color) !important; }
+    .paint-highlight { color: var(--paint-color) !important; border-left-color: var(--paint-color) !important; }
+
+    .btn-group { display: flex; gap: 10px; margin-bottom: 15px; }
+    .btn-group-bottom { display: flex; gap: 10px; margin-top: 15px; padding-top: 15px; border-top: 1px dashed var(--border-color); }
+
+    button { padding: 8px 16px; border: none; border-radius: 4px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+    .btn-add { background-color: var(--accent-color); color: white; }
+    .btn-export { background-color: #10b981; color: white; }
+    .btn-print { background-color: #4b5563; color: white; }
+    .btn-remove { background-color: #ef4444; color: white; font-size: 12px; padding: 4px 8px; }
+    .btn-duplicate { background-color: #3b82f6; color: white; font-size: 12px; padding: 4px 8px; }
+    .btn-secondary { background-color: #e2e8f0; color: #334155; font-size: 12px; padding: 6px 12px; }
+
+    /* Room Styling */
+    .room-card { border: 1px solid var(--border-color); border-radius: 6px; padding: 15px; margin-bottom: 15px; background: #fafafa; }
+    .room-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); }
+    .room-header h3 { margin: 0; font-size: 14px; }
+    .room-toggles { display: flex; gap: 12px; align-items: center; font-size: 13px; flex-wrap: wrap; }
+    .room-toggles label { display: flex; align-items: center; gap: 4px; cursor: pointer; }
+    .toggle-green { color: var(--green-board-color); font-weight: 600; }
+    .toggle-paint { color: var(--paint-color); font-weight: 600; }
+    
+    .room-sub-row { margin-top: 12px; padding-top: 12px; border-top: 1px dashed #e5e7eb; }
+
+    /* Line Items */
+    .line-item { display: grid; grid-template-columns: 2fr 1fr auto; gap: 10px; margin-bottom: 10px; align-items: center; }
+
+    /* Footer Summary */
+    .summary-footer { position: fixed; bottom: 0; left: 0; right: 0; background-color: var(--footer-bg); color: white; padding: 15px 20px; box-shadow: 0 -4px 6px rgba(0,0,0,0.1); z-index: 100; }
+    .summary-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; max-width: 1050px; margin: 0 auto; text-align: center; }
+    .summary-item label { display: block; font-size: 10px; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px; letter-spacing: 0.5px; }
+    .summary-item .val { font-size: 14px; font-weight: 700; }
+    .total-bid-row { max-width: 1050px; margin: 10px auto 0; text-align: center; border-top: 1px solid #334155; padding-top: 10px; }
+    .total-bid-row label { font-size: 12px; color: #94a3b8; text-transform: uppercase; margin-right: 10px; }
+    .total-bid-row .val { font-size: 22px; font-weight: 800; color: #fbbf24; }
+
+    /* PRINT STYLES */
+    @media print {
+      body { padding: 0; background-color: white; }
+      .container { max-width: 100%; padding-bottom: 0; }
+      .no-print, .btn-group, .btn-group-bottom, button, .summary-footer { display: none !important; }
+      .card { border: none; box-shadow: none; margin-bottom: 10px; padding: 10px 0; border-bottom: 1px solid #ddd; border-radius: 0; }
+      .input-group input, .input-group select, .input-group textarea { border: none; padding: 0; font-weight: bold; background: transparent; }
+      .room-card { break-inside: avoid; background: white; border: 1px solid #ddd; }
+      .client-total { display: block !important; font-size: 24px; font-weight: bold; text-align: right; padding: 20px 0; color: black; }
+    }
+    .client-total { display: none; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header & Client Info -->
+    <div class="card">
+      <div class="header-content">
+        <img id="company-logo" src="" alt="Junior's Pro Finish Logo">
+        <div>
+          <h1>Junior's Pro Finish, LLC</h1>
+          <div class="subtitle">Official Project Estimate</div>
+        </div>
+      </div>
+      
+      <div class="grid grid-4">
+        <div class="input-group">
+          <label>Customer Name</label>
+          <input type="text" id="cust-name" placeholder="John Doe">
+        </div>
+        <div class="input-group">
+          <label>Phone Number</label>
+          <input type="text" id="cust-phone" placeholder="(555) 123-4567">
+        </div>
+        <div class="input-group">
+          <label>Email Address</label>
+          <input type="text" id="cust-email" placeholder="john@example.com">
+        </div>
+        <div class="input-group">
+          <label>Date</label>
+          <input type="date" id="current-date">
+        </div>
+        <div class="input-group full-width">
+          <label>Project Site Address</label>
+          <input type="text" id="cust-address" placeholder="123 Main St, City, State, Zip">
+        </div>
+        <div class="input-group full-width">
+          <label>Scope of Work / Job Notes</label>
+          <textarea id="scope-notes" placeholder="Enter specific job details, exclusions, or customer requests here..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Internal Settings (Hidden on Print) -->
+    <div class="card no-print">
+      <h2 class="card-title">Internal Settings (Hidden from Client)</h2>
+      <div class="grid grid-6">
+        <div class="input-group">
+          <label>Base Labor Rate</label>
+          <input type="number" id="labor-rate" value="2.90" step="0.01" oninput="calculate()">
+        </div>
+        <div class="input-group">
+          <label>Material Rate</label>
+          <input type="number" id="material-rate" value="0.65" step="0.01" oninput="calculate()">
+        </div>
+        <div class="input-group">
+          <label>Paint Cov. (SQ FT/Gal)</label>
+          <input type="number" id="paint-coverage" value="350" oninput="calculate()">
+        </div>
+        <div class="input-group">
+          <label>Sheet Size</label>
+          <select id="sheet-size" onchange="calculate()">
+            <option value="32">4' x 8'</option>
+            <option value="40">4' x 10'</option>
+            <option value="48" selected>4' x 12'</option>
+          </select>
+        </div>
+        <!-- Logo Upload Tool -->
+        <div class="input-group" style="grid-column: span 2;">
+          <label>Upload Company Logo</label>
+          <div style="display: flex; gap: 5px;">
+            <input type="file" id="logo-upload" accept="image/*" onchange="loadLogo(event)">
+            <button class="btn-remove" onclick="removeLogo()" type="button" title="Remove Logo">X</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Save/Load (Hidden on Print) -->
+    <div class="card no-print">
+      <div class="grid grid-4" style="align-items: end;">
+        <div class="input-group"><label>Save Estimate As:</label><input type="text" id="save-name" placeholder="Smith Residence"></div>
+        <div class="input-group"><button class="btn-export" onclick="saveEstimate()">💾 Save</button></div>
+        <div class="input-group"><label>Load Estimate:</label><select id="load-dropdown"><option value="">-- Select --</option></select></div>
+        <div style="display:flex; gap:10px;"><button class="btn-print" onclick="loadEstimate()">📂 Load</button><button class="btn-remove" onclick="deleteEstimate()">🗑️ Delete</button></div>
+      </div>
+    </div>
+
+    <!-- Materials Estimator (Hidden on Print) -->
+    <div class="card no-print">
+      <h2 class="card-title">Estimated Materials Required</h2>
+      <div class="grid grid-6" style="margin-bottom: 15px; border-bottom: 1px dashed #ddd; padding-bottom: 15px;">
+        <div class="input-group"><label>Joint Compound</label><div class="highlight-value" id="est-mud">0 buckets</div></div>
+        <div class="input-group"><label>Drywall Tape</label><div class="highlight-value" id="est-tape">0 rolls</div></div>
+        <div class="input-group"><label>Screws (1-¼")</label><div class="highlight-value" id="est-screws">0 lbs</div></div>
+        <div class="input-group"><label>Standard Sheets</label><div class="highlight-value" id="est-standard-sheets">0 sheets</div></div>
+        <div class="input-group"><label>Green Board</label><div class="highlight-value green-highlight" id="est-green-sheets">0 sheets</div></div>
+        <div class="input-group"><label>Bead (8' Stks)</label><div class="highlight-value" id="est-bead-total">0 sticks</div></div>
+      </div>
+      <div class="grid grid-4">
+        <div class="input-group"><label>Primer</label><div class="highlight-value paint-highlight" id="est-primer">0 Gallons</div></div>
+        <div class="input-group"><label>Ceiling Paint</label><div class="highlight-value paint-highlight" id="est-ceil-paint">0 Gallons</div></div>
+        <div class="input-group"><label>Wall Paint</label><div class="highlight-value paint-highlight" id="est-wall-paint">0 Gallons</div></div>
+      </div>
+    </div>
+
+    <!-- Rooms -->
+    <div class="card">
+      <h2 class="card-title">
+        Room Breakdown
+        <div class="btn-group" style="margin:0;">
+          <button class="btn-add no-print" onclick="addRoom()">➕ Add Room</button>
+          <button class="btn-export no-print" onclick="exportCSV()">📊 Export CSV</button>
+          <button class="btn-print no-print" onclick="window.print()">🖨️ Print Proposal</button>
+        </div>
+      </h2>
+
+      <div id="rooms-container"></div>
+    </div>
+
+    <!-- Custom Line Items -->
+    <div class="card">
+      <h2 class="card-title">Additional Services & Custom Line Items <button class="btn-secondary no-print" onclick="addLineItem()">➕ Add Item</button></h2>
+      <div id="line-items-container">
+        <!-- Line items injected here -->
+      </div>
+    </div>
+
+    <!-- Print Only Total -->
+    <div class="client-total">
+      Total Project Estimate: <span id="print-total-price">$0.00</span>
+    </div>
+
+  </div>
+
+  <!-- Footer Summary (App view only) -->
+  <div class="summary-footer no-print">
+    <div class="summary-grid">
+      <div class="summary-item"><label>Total Area</label><div class="val" id="sum-area">0 sq ft</div></div>
+      <div class="summary-item"><label>Std 1/2" Sheets</label><div class="val" id="sum-wall-sheets">0</div></div>
+      <div class="summary-item"><label>Std 5/8" Sheets</label><div class="val" id="sum-ceiling-sheets">0</div></div>
+      <div class="summary-item"><label class="green-text">Green Board</label><div class="val green-text" id="sum-green-sheets">0</div></div>
+      <div class="summary-item"><label>Paint (Total Gal)</label><div class="val" id="sum-paint-gal" style="color: #60a5fa;">0</div></div>
+      <div class="summary-item"><label>Est. Labor</label><div class="val" id="sum-labor">$0.00</div></div>
+      <div class="summary-item"><label>Est. Material</label><div class="val" id="sum-mat">$0.00</div></div>
+      <div class="summary-item"><label>Custom Items</label><div class="val" id="sum-custom">$0.00</div></div>
+    </div>
+    <div class="total-bid-row">
+      <label>Total Bid Estimate</label>
+      <span class="val" id="sum-total">$0.00</span>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'juniors_estimates_v2';
+    const LOGO_KEY = 'juniors_logo_saved';
+
+    window.onload = () => {
+      document.getElementById('current-date').valueAsDate = new Date();
+      updateDropdown();
+      addRoom();
+      
+      // Load saved logo if it exists
+      const savedLogo = localStorage.getItem(LOGO_KEY);
+      if (savedLogo) {
+        document.getElementById('company-logo').src = savedLogo;
+        document.getElementById('company-logo').style.display = 'block';
+      }
+    };
+
+    // --- LOGO HANDLERS ---
+    function loadLogo(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const base64Image = e.target.result;
+          document.getElementById('company-logo').src = base64Image;
+          document.getElementById('company-logo').style.display = 'block';
+          // Save to browser memory so it stays forever
+          localStorage.setItem(LOGO_KEY, base64Image);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function removeLogo() {
+      localStorage.removeItem(LOGO_KEY);
+      document.getElementById('company-logo').src = '';
+      document.getElementById('company-logo').style.display = 'none';
+      document.getElementById('logo-upload').value = '';
+    }
+
+    // --- ROOM HANDLERS ---
+    function addRoom(data = {}) {
+      const container = document.getElementById('rooms-container');
+      const roomDiv = document.createElement('div');
+      roomDiv.className = 'room-card';
+      
+      const safe = (val, fallback) => val !== undefined ? val : fallback;
+      const checked = (val, defaultVal) => safe(val, defaultVal) ? 'checked' : '';
+
+      roomDiv.innerHTML = `
+        <div class="room-header">
+          <h3>Room</h3>
+          <div class="room-toggles no-print">
+            <label><input type="checkbox" class="check-walls" ${checked(data.walls, true)} onchange="calculate()"> Walls</label>
+            <label><input type="checkbox" class="check-ceiling" ${checked(data.ceiling, true)} onchange="calculate()"> Ceiling</label>
+            <label class="toggle-green"><input type="checkbox" class="check-green" ${checked(data.green, false)} onchange="calculate()"> Green Board</label>
+            <span style="color:#ccc;">|</span>
+            <label class="toggle-paint"><input type="checkbox" class="check-primer" ${checked(data.primer, false)} onchange="calculate()"> Primer</label>
+            <label class="toggle-paint"><input type="checkbox" class="check-paint-walls" ${checked(data.paintWalls, false)} onchange="calculate()"> Paint Walls</label>
+            <label class="toggle-paint"><input type="checkbox" class="check-paint-ceil" ${checked(data.paintCeil, false)} onchange="calculate()"> Paint Ceil</label>
+            
+            <button class="btn-duplicate" style="margin-left:10px" onclick="duplicateRoom(this)">📋 Duplicate</button>
+            <button class="btn-remove" onclick="this.closest('.room-card').remove(); calculate();">🗑️ Remove</button>
+          </div>
+        </div>
+        
+        <div class="grid grid-6">
+          <div class="input-group">
+            <label>Room Name</label>
+            <input type="text" class="val-name" value="${safe(data.name, '')}" placeholder="e.g. Master Bath">
+          </div>
+          <div class="input-group"><label>Length (ft)</label><input type="number" class="val-length" value="${safe(data.l, '0')}" min="0" oninput="calculate()"></div>
+          <div class="input-group"><label>Width (ft)</label><input type="number" class="val-width" value="${safe(data.w, '0')}" min="0" oninput="calculate()"></div>
+          <div class="input-group"><label>Height (ft)</label><input type="number" class="val-height" value="${safe(data.h, '8')}" min="0" oninput="calculate()"></div>
+          <div class="input-group"><label>Out. Corners</label><input type="number" class="val-corners" value="${safe(data.corners, '0')}" min="0" oninput="calculate()"></div>
+          <div class="input-group no-print">
+            <label>Bead Style</label>
+            <select class="val-bead-type" onchange="calculate()">
+              <option value="square" ${data.beadType === 'square' ? 'selected' : ''}>Square</option>
+              <option value="bullnose" ${data.beadType === 'bullnose' ? 'selected' : ''}>Bullnose</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-3 room-sub-row no-print">
+          <div class="input-group">
+            <label>Deduct Openings (Windows/Doors SqFt)</label>
+            <input type="number" class="val-deduct" value="${safe(data.deduct, '0')}" min="0" oninput="calculate()">
+          </div>
+          <div class="input-group">
+            <label>Difficulty / Vaulted Ceiling Markup (%)</label>
+            <input type="number" class="val-markup" value="${safe(data.markup, '0')}" min="0" oninput="calculate()">
+          </div>
+          <div class="input-group">
+            <label>Finish Level (Labor Multiplier)</label>
+            <select class="val-finish" onchange="calculate()">
+              <option value="1.0" ${data.finish == '1.0' ? 'selected' : ''}>Level 4 (Standard)</option>
+              <option value="1.25" ${data.finish == '1.25' ? 'selected' : ''}>Level 5 / Smooth (+25% Labor)</option>
+              <option value="1.15" ${data.finish == '1.15' ? 'selected' : ''}>Texture (+15% Labor)</option>
+            </select>
+          </div>
+        </div>
+      `;
+      container.appendChild(roomDiv);
+      calculate();
+    }
+
+    function addLineItem(name = '', cost = '') {
+      const container = document.getElementById('line-items-container');
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'line-item';
+      itemDiv.innerHTML = `
+        <div class="input-group"><input type="text" class="li-name" placeholder="Description (e.g. Patching, Travel Fee)" value="${name}"></div>
+        <div class="input-group"><input type="number" class="li-cost" placeholder="Cost ($)" value="${cost}" oninput="calculate()"></div>
+        <button class="btn-remove no-print" onclick="this.closest('.line-item').remove(); calculate();">X</button>
+      `;
+      container.appendChild(itemDiv);
+    }
+
+    function duplicateRoom(btn) {
+      const room = btn.closest('.room-card');
+      const originalName = room.querySelector('.val-name').value;
+      
+      const data = {
+        name: originalName ? originalName + ' (Copy)' : 'Room (Copy)',
+        l: room.querySelector('.val-length').value,
+        w: room.querySelector('.val-width').value,
+        h: room.querySelector('.val-height').value,
+        corners: room.querySelector('.val-corners').value,
+        deduct: room.querySelector('.val-deduct').value,
+        markup: room.querySelector('.val-markup').value,
+        finish: room.querySelector('.val-finish').value,
+        beadType: room.querySelector('.val-bead-type').value,
+        walls: room.querySelector('.check-walls').checked,
+        ceiling: room.querySelector('.check-ceiling').checked,
+        green: room.querySelector('.check-green').checked,
+        primer: room.querySelector('.check-primer').checked,
+        paintWalls: room.querySelector('.check-paint-walls').checked,
+        paintCeil: room.querySelector('.check-paint-ceil').checked
+      };
+      addRoom(data);
+    }
+
+    // --- CALCULATOR ---
+    function calculate() {
+      const baseLaborRate = parseFloat(document.getElementById('labor-rate').value) || 0;
+      const materialRate = parseFloat(document.getElementById('material-rate').value) || 0;
+      const sheetSqFt = parseFloat(document.getElementById('sheet-size').value) || 48;
+      const paintCov = parseFloat(document.getElementById('paint-coverage').value) || 350;
+      
+      let totals = { wallArea: 0, ceilArea: 0, greenArea: 0, sqBead: 0, bullBead: 0, primerArea: 0, paintWallArea: 0, paintCeilArea: 0, laborCost: 0, matCost: 0 };
+
+      document.querySelectorAll('.room-card').forEach(room => {
+        const l = parseFloat(room.querySelector('.val-length').value) || 0;
+        const w = parseFloat(room.querySelector('.val-width').value) || 0;
+        const h = parseFloat(room.querySelector('.val-height').value) || 0;
+        const deduct = parseFloat(room.querySelector('.val-deduct').value) || 0;
+        const markup = parseFloat(room.querySelector('.val-markup').value) || 0;
+        const finishMult = parseFloat(room.querySelector('.val-finish').value) || 1.0;
+        const corners = parseFloat(room.querySelector('.val-corners').value) || 0;
+        
+        const cks = {
+          walls: room.querySelector('.check-walls').checked,
+          ceil: room.querySelector('.check-ceiling').checked,
+          green: room.querySelector('.check-green').checked,
+          primer: room.querySelector('.check-primer').checked,
+          pWall: room.querySelector('.check-paint-walls').checked,
+          pCeil: room.querySelector('.check-paint-ceil').checked
+        };
+
+        let rawWall = cks.walls ? (2 * (l + w) * h) : 0;
+        let finalWall = Math.max(0, rawWall - deduct); 
+        let finalCeil = cks.ceil ? (l * w) : 0;
+        let roomTotalArea = finalWall + finalCeil;
+
+        if (cks.green) totals.greenArea += roomTotalArea;
+        else { totals.wallArea += finalWall; totals.ceilArea += finalCeil; }
+
+        if (cks.primer) totals.primerArea += roomTotalArea;
+        if (cks.pWall) totals.paintWallArea += finalWall;
+        if (cks.pCeil) totals.paintCeilArea += finalCeil;
+
+        const cornerFt = corners * h;
+        if (room.querySelector('.val-bead-type').value === 'bullnose') totals.bullBead += cornerFt;
+        else totals.sqBead += cornerFt;
+
+        const roomLaborRate = baseLaborRate * (1 + (markup / 100)) * finishMult;
+        totals.laborCost += (roomTotalArea * roomLaborRate);
+        totals.matCost += (roomTotalArea * materialRate);
+      });
+
+      let customCost = 0;
+      document.querySelectorAll('.li-cost').forEach(input => {
+        customCost += parseFloat(input.value) || 0;
+      });
+
+      const totalDrywallArea = totals.wallArea + totals.ceilArea + totals.greenArea;
+      const totalCost = totals.laborCost + totals.matCost + customCost;
+
+      document.getElementById('est-mud').textContent = Math.ceil(totalDrywallArea / 400) + ' buckets';
+      document.getElementById('est-tape').textContent = Math.ceil((totalDrywallArea * 0.37) / 250) + ' rolls';
+      document.getElementById('est-screws').textContent = Math.ceil(totalDrywallArea / 200) + ' lbs';
+      
+      const wSheets = Math.ceil((totals.wallArea * 1.15) / sheetSqFt);
+      const cSheets = Math.ceil((totals.ceilArea * 1.15) / sheetSqFt);
+      const gSheets = Math.ceil((totals.greenArea * 1.15) / sheetSqFt);
+      
+      document.getElementById('est-standard-sheets').textContent = (wSheets + cSheets) + ' sheets';
+      document.getElementById('est-green-sheets').textContent = gSheets + ' sheets';
+      document.getElementById('est-bead-total').textContent = Math.ceil((totals.sqBead + totals.bullBead) / 8) + ' sticks';
+
+      const prGal = Math.ceil(totals.primerArea / paintCov);
+      const wpGal = Math.ceil(totals.paintWallArea / paintCov);
+      const cpGal = Math.ceil(totals.paintCeilArea / paintCov);
+      document.getElementById('est-primer').textContent = prGal + ' Gal';
+      document.getElementById('est-wall-paint').textContent = wpGal + ' Gal';
+      document.getElementById('est-ceil-paint').textContent = cpGal + ' Gal';
+
+      document.getElementById('sum-area').textContent = totalDrywallArea.toLocaleString() + ' sq ft';
+      document.getElementById('sum-wall-sheets').textContent = wSheets;
+      document.getElementById('sum-ceiling-sheets').textContent = cSheets;
+      document.getElementById('sum-green-sheets').textContent = gSheets;
+      document.getElementById('sum-paint-gal').textContent = (prGal + wpGal + cpGal);
+      
+      const fmt = (num) => '$' + num.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+      
+      document.getElementById('sum-labor').textContent = fmt(totals.laborCost);
+      document.getElementById('sum-mat').textContent = fmt(totals.matCost);
+      document.getElementById('sum-custom').textContent = fmt(customCost);
+      document.getElementById('sum-total').textContent = fmt(totalCost);
+      document.getElementById('print-total-price').textContent = fmt(totalCost);
+    }
+
+    // --- CSV EXPORT ---
+    function exportCSV() {
+      let csv = "Room Name,Length,Width,Height,Openings Deducted,Markup %,Finish Level,Walls,Ceiling,Green Board,Primer,Paint Walls,Paint Ceil\n";
+      document.querySelectorAll('.room-card').forEach(room => {
+        let row = [
+          `"${room.querySelector('.val-name').value}"`,
+          room.querySelector('.val-length').value,
+          room.querySelector('.val-width').value,
+          room.querySelector('.val-height').value,
+          room.querySelector('.val-deduct').value,
+          room.querySelector('.val-markup').value,
+          room.querySelector('.val-finish').options[room.querySelector('.val-finish').selectedIndex].text,
+          room.querySelector('.check-walls').checked ? 'Yes' : 'No',
+          room.querySelector('.check-ceiling').checked ? 'Yes' : 'No',
+          room.querySelector('.check-green').checked ? 'Yes' : 'No',
+          room.querySelector('.check-primer').checked ? 'Yes' : 'No',
+          room.querySelector('.check-paint-walls').checked ? 'Yes' : 'No',
+          room.querySelector('.check-paint-ceil').checked ? 'Yes' : 'No'
+        ];
+        csv += row.join(",") + "\n";
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.setAttribute('hidden', '');
+      a.setAttribute('href', url);
+      a.setAttribute('download', (document.getElementById('cust-name').value || 'Estimate') + '_Rooms.csv');
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    // --- SAVE & LOAD ---
+    function getSaves() { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+    function updateDropdown() {
+      const dropdown = document.getElementById('load-dropdown');
+      dropdown.innerHTML = '<option value="">-- Select --</option>';
+      Object.keys(getSaves()).forEach(name => {
+        dropdown.innerHTML += `<option value="${name}">${name}</option>`;
+      });
+    }
+
+    function saveEstimate() {
+      const saveName = document.getElementById('save-name').value.trim();
+      if (!saveName) return alert("Enter a save name.");
+
+      const data = {
+        customer: document.getElementById('cust-name').value, phone: document.getElementById('cust-phone').value,
+        email: document.getElementById('cust-email').value, date: document.getElementById('current-date').value,
+        address: document.getElementById('cust-address').value, notes: document.getElementById('scope-notes').value,
+        laborRate: document.getElementById('labor-rate').value, materialRate: document.getElementById('material-rate').value,
+        paintCov: document.getElementById('paint-coverage').value, sheetSize: document.getElementById('sheet-size').value,
+        rooms: [], lineItems: []
+      };
+
+      document.querySelectorAll('.room-card').forEach(room => {
+        data.rooms.push({
+          name: room.querySelector('.val-name').value, l: room.querySelector('.val-length').value,
+          w: room.querySelector('.val-width').value, h: room.querySelector('.val-height').value,
+          corners: room.querySelector('.val-corners').value, deduct: room.querySelector('.val-deduct').value,
+          markup: room.querySelector('.val-markup').value, finish: room.querySelector('.val-finish').value,
+          beadType: room.querySelector('.val-bead-type').value, walls: room.querySelector('.check-walls').checked,
+          ceiling: room.querySelector('.check-ceiling').checked, green: room.querySelector('.check-green').checked,
+          primer: room.querySelector('.check-primer').checked, paintWalls: room.querySelector('.check-paint-walls').checked,
+          paintCeil: room.querySelector('.check-paint-ceil').checked
+        });
+      });
+
+      document.querySelectorAll('.line-item').forEach(li => {
+        data.lineItems.push({ name: li.querySelector('.li-name').value, cost: li.querySelector('.li-cost').value });
+      });
+
+      const saves = getSaves();
+      saves[saveName] = data;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(saves));
+      alert("Saved!");
+      updateDropdown();
+      document.getElementById('load-dropdown').value = saveName;
+    }
+
+    function loadEstimate() {
+      const name = document.getElementById('load-dropdown').value;
+      if (!name) return alert("Select an estimate.");
+      const data = getSaves()[name];
+      if (!data) return;
+
+      document.getElementById('save-name').value = name;
+      document.getElementById('cust-name').value = data.customer || ''; document.getElementById('cust-phone').value = data.phone || '';
+      document.getElementById('cust-email').value = data.email || ''; document.getElementById('current-date').value = data.date || '';
+      document.getElementById('cust-address').value = data.address || ''; document.getElementById('scope-notes').value = data.notes || '';
+      document.getElementById('labor-rate').value = data.laborRate || 2.90; document.getElementById('material-rate').value = data.materialRate || 0.65;
+      document.getElementById('paint-coverage').value = data.paintCov || 350; document.getElementById('sheet-size').value = data.sheetSize || 48;
+
+      document.getElementById('rooms-container').innerHTML = '';
+      (data.rooms || []).forEach(room => addRoom(room));
+      if (!data.rooms || data.rooms.length === 0) addRoom();
+
+      document.getElementById('line-items-container').innerHTML = '';
+      (data.lineItems || []).forEach(li => addLineItem(li.name, li.cost));
+
+      calculate();
+    }
+
+    function deleteEstimate() {
+      const name = document.getElementById('load-dropdown').value;
+      if (!name) return;
+      if (confirm(`Delete "${name}"?`)) {
+        const saves = getSaves(); delete saves[name];
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(saves));
+        updateDropdown(); document.getElementById('save-name').value = '';
+      }
+    }
+  </script>
+</body>
+</html>
